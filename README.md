@@ -1,66 +1,150 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Subscription-Based Content Platform API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 1. System Overview
 
-## About Laravel
+The platform provides a subscription-based content delivery system with tiered access control, automated payment processing, and personalized content recommendations.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 2. Technical Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Backend Framework: Laravel 10.x
+- Database: MySQL/PostgreSQL
+- Cache & Queue: Redis
+- Payment Processing: Stripe
+- Authentication: Laravel Sanctum
+- Mail Service: SMTP/Mailgun
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 3. Core Features
 
-## Learning Laravel
+1. User Authentication & Authorization
+2. Subscription Management
+3. Content Access Control
+4. Payment Processing
+5. Recommendation Engine
+6. Notification System
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 4. API Endpoints
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Authentication
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+POST /auth/register
+POST /auth/login
+POST /auth/logout
 
-## Laravel Sponsors
+### Subscription Management
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+GET /subscriptions/current
+POST /subscriptions/upgrade
+POST /subscriptions/cancel
+PUT /subscriptions/update-payment
 
-### Premium Partners
+### Content Management
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+GET /content
+GET /content/{content}
+GET /content/recommendations
 
-## Contributing
+## 5. Data Models
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### User
 
-## Code of Conduct
+- id (uuid)
+- name (string)
+- email (string)
+- password (hashed string)
+- subscription_tier (enum: FREE, BASIC, PREMIUM)
+- subscription_status (enum: ACTIVE, INACTIVE, GRACE_PERIOD)
+- monthly_view_count (integer)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Subscription
 
-## Security Vulnerabilities
+- id (uuid)
+- user_id (foreign key)
+- tier (enum: FREE, BASIC, PREMIUM)
+- status (enum: ACTIVE, CANCELLED, GRACE_PERIOD)
+- start_date (timestamp)
+- end_date (timestamp)
+- auto_renew (boolean)
+- payment_method_id (string)
+- last_payment_date (timestamp)
+- next_billing_date (timestamp)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Content
 
-## License
+- id (uuid)
+- title (string)
+- description (text)
+- type (string)
+- access_tier (enum: FREE, BASIC, PREMIUM)
+- views (integer)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 6. Subscription Tiers
+
+1. FREE
+   - Limited to 5 articles/videos per month
+   - Basic content only
+2. BASIC
+   - 30 articles/videos per month
+   - Basic + intermediate content
+3. PREMIUM
+   - Unlimited access
+   - All content types
+
+## 7. Caching Strategy
+
+- User subscription status (TTL: 1 hour)
+- Content metadata (TTL: 24 hours)
+- Authentication tokens (TTL: token expiry)
+- Content recommendations (TTL: 1 hour)
+
+## 8. Background Jobs
+
+1. Subscription renewal processing
+2. Failed payment handling
+3. Monthly view count reset
+4. Recommendation calculation
+5. Email notifications
+
+## 9. Security Measures
+
+1. API Authentication using Laravel Sanctum
+2. Rate limiting on all endpoints
+3. Input validation and sanitization
+4. Secure payment processing with Stripe
+5. CORS protection
+6. XSS prevention
+
+## 10. Monitoring & Logging
+
+1. API request/response logging
+2. Payment transaction logging
+3. Subscription status changes
+4. Failed payment attempts
+5. Cache hit/miss rates
+
+## 11. Error Handling
+
+Standard HTTP status codes with detailed error messages:
+
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 422: Validation Error
+- 429: Too Many Requests
+- 500: Server Error
+
+## 12. Performance Optimization
+
+1. Database indexing
+2. Query optimization
+3. Cache implementation
+4. Background job processing
+5. Content delivery optimization
+
+## 13. Scalability Considerations
+
+1. Horizontal scaling capability
+2. Cache distribution
+3. Queue worker distribution
+4. Database replication
+5. Load balancing
