@@ -54,7 +54,7 @@ class SubscriptionService
             DB::beginTransaction();
 
             // Cancel Stripe subscription
-            $user->subscription('default')->cancel();
+            $user->subscription()->cancel();
 
             // Update local subscription
             $subscription = $user->subscription;
@@ -80,4 +80,4 @@ class SubscriptionService
             'PREMIUM' => config('services.stripe.premium_plan'),
         ][$tier];
     }
-} 
+}

@@ -48,7 +48,7 @@ class SubscriptionController extends Controller
     {
         $result = $this->subscriptionService->cancel(auth()->user());
         Cache::forget('subscription_' . auth()->id());
-        
+
         return response()->json($result);
     }
-} 
+}

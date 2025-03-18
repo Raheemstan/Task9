@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'basic_plan' => env('STRIPE_BASIC_PLAN'),
+        'premium_plan' => env('STRIPE_PREMIUM_PLAN'),
+    ],
+
 ];
